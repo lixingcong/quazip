@@ -1,6 +1,8 @@
 #ifndef QUAZIP_TEST_JLCP_COMPRESS_H
 #define QUAZIP_TEST_JLCP_COMPRESS_H
 
+#include <QStringList>
+
 /*
 Copyright (C) 2025 cen1
 

@@ -4,7 +4,6 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
-#include <QtCore/QTimeZone>
 #include <QtTest/QTest>
 
 #include <quazip.h>
@@ -26,7 +25,7 @@ void TestQuaZipNewInfo::setFileNTFSTimes()
     if (!createTestFiles(testFiles)) {
         QFAIL("Can't create test file");
     }
-    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), QTimeZone::utc());
+    QDateTime base(QDate(1601, 1, 1), QTime(0, 0), Qt::UTC);
     quint64 mTicks, aTicks, cTicks;
     {
         // create

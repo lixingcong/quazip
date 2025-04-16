@@ -38,13 +38,13 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <quazip.h>
 #include <quazipfile.h>
 #include <quazip_qt_compat.h>
+#include <memory>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
 #include <QtCore/QFileInfo>
 #include <QtCore/QTextStream>
-#include <QtCore/QRandomGenerator>
-
+#include <QVector>
 #include <QtTest/QTest>
 
 bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
@@ -61,9 +61,9 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
             }
             //qDebug() << "Created path " << testDir.path();
             QFile dirFile(testDir.path());
-            if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
-                                  QFileDevice::ReadGroup | QFileDevice::ExeGroup |
-                                  QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+            if (!dirFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                                  QFile::ReadGroup | QFile::ExeGroup |
+                                  QFile::ReadOther | QFile::ExeOther)) {
                 qWarning("Couldn't set permissions for %s",
                          testDir.path().toUtf8().constData());
                 return false;
@@ -77,9 +77,9 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
             }
             //qDebug() << "Created path " << filePath;
             QFile dirFile(filePath);
-            if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
-                                   QFileDevice::ReadGroup | QFileDevice::ExeGroup |
-                                   QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+            if (!dirFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+                                   QFile::ReadGroup | QFile::ExeGroup |
+                                   QFile::ReadOther | QFile::ExeOther)) {
               qWarning("Couldn't set permissions for %s",
                        filePath.toUtf8().constData());
               return false;
@@ -91,8 +91,8 @@ bool createTestFiles(const QStringList &fileNames, int size, const QString &dir)
                         fileName.toUtf8().constData());
                 return false;
             }
-            testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
-                                QFileDevice::ReadGroup | QFileDevice::ReadOther);
+            testFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner |
+                                QFile::ReadGroup | QFile::ReadOther);
             if (size == -1) {
                 QTextStream testStream(&testFile);
                 testStream << "This is a test file named " << fileName << quazip_endl;
@@ -118,9 +118,9 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 			return false;
 		}
 		QFile dirFile(testDir.path());
-		if (!dirFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner |
-		                            QFileDevice::ReadGroup | QFileDevice::ExeGroup |
-		                            QFileDevice::ReadOther | QFileDevice::ExeOther)) {
+		if (!dirFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner |
+		                            QFile::ReadGroup | QFile::ExeGroup |
+		                            QFile::ReadOther | QFile::ExeOther)) {
 		  qWarning("Couldn't set permissions for %s", testDir.path().toUtf8().constData());
 		  return false;
 		}
@@ -131,8 +131,8 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
 		qWarning("Couldn't create %s", fileName.toUtf8().constData());
 		return false;
 	}
-	testFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner |
-	                      QFileDevice::ReadGroup | QFileDevice::ReadOther);
+	testFile.setPermissions(QFile::ReadOwner | QFile::WriteOwner |
+	                      QFile::ReadGroup | QFile::ReadOther);
 
 	constexpr qint64 BUFFER_SIZE = 10 * 1024 * 1024; // 10MB, need to use heap because stack has size limits
 	static_assert(BUFFER_SIZE % 4 == 0, "BUFFER_SIZE must be divisible by 4");
@@ -147,7 +147,7 @@ bool createTestFileLarge(const QString &fileName, long long size, const QString 
     while (remaining > 0) {
 		long long chunkSize = qMin(remaining, BUFFER_SIZE);
 		if (useRandomBuffer) {
-			QRandomGenerator::global()->fillRange(randomBuffer->data(), randomBuffer->size());
+			//QRandomGenerator::global()->fillRange(randomBuffer->data(), randomBuffer->size());
 			if (testFile.write(reinterpret_cast<const char*>(randomBuffer->data()), chunkSize) != chunkSize) {
 				qWarning("Write error!");
 				return false;

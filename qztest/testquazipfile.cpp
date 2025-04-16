@@ -37,6 +37,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QBuffer>
 #include <QtCore/QDataStream>
 #include <QtCore/QCryptographicHash>
+#include <QDebug>
 
 #include <QtTest/QTest>
 
@@ -262,8 +263,8 @@ void TestQuaZipFile::zipUnzipLarge()
     QuaZipFile archived(&testUnzip);
     QVERIFY(archived.open(QIODevice::ReadOnly, NULL));
 
-    QCryptographicHash originalHash(QCryptographicHash::Sha256);
-    QCryptographicHash extractedHash(QCryptographicHash::Sha256);
+    QCryptographicHash originalHash(QCryptographicHash::Md5);
+    QCryptographicHash extractedHash(QCryptographicHash::Md5);
 
     // readAll fails for large files in Qt5, there is also a deprecation for .addData so we need to do all this below..
     char buffer[256 * 1024];

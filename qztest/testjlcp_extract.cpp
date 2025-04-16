@@ -32,6 +32,7 @@ see quazip/(un)zip.h files for details. Basically it's the zlib license.
 #include <QtCore/QMetaType>
 #include <QtCore/QDirIterator>
 #include <QtTest/QTest>
+#include <QDebug>
 
 #include <JlCompress.h>
 #include <quazip_qt_compat.h>
@@ -50,15 +51,15 @@ Q_DECLARE_METATYPE(JlCompress::Options::CompressionStrategy)
  */
 void TestJlCpExtract::extract()
 {
-	QSet<QString> zipNames = {
-	  "jlsimplefile.zip",
-	  "jlsimplefile-storage.zip",
-	  "jlsimplefile-best.zip"
-	};
+	QSet<QString> zipNames;
 
-    QSet<QString> fileNames = {
-	  "test0.txt"
-	};
+	zipNames.insert("jlsimplefile.zip");
+	zipNames.insert("jlsimplefile-storage.zip");
+	zipNames.insert("jlsimplefile-best.zip");
+
+
+	QSet<QString> fileNames;
+	fileNames.insert("test0.txt");
 
     qDebug() << "Performing CP extract tests in " << QDir::currentPath();
 
@@ -78,7 +79,9 @@ void TestJlCpExtract::extract()
         JlCompress::extractDir(cpZip.absoluteFilePath(), target2.absolutePath());
 
         QList<QString> extractedZipList = target2.entryList(QStringList() << "*.zip", QDir::Files);
-        QSet<QString> extractedZipSet(extractedZipList.begin(), extractedZipList.end());
+		QSet<QString>  extractedZipSet;
+		foreach (const QString &s, extractedZipList)
+			extractedZipSet.insert(s);
 
         extractedZipSet = extractedZipSet.subtract(zipNames);
         QVERIFY(extractedZipSet.isEmpty());
@@ -91,7 +94,9 @@ void TestJlCpExtract::extract()
 			JlCompress::extractDir(zip.absoluteFilePath(), target3.absolutePath());
 
 			QList<QString> extractedFileList = target3.entryList(QDir::Files);
-			QSet<QString> extractedFileSet(extractedFileList.begin(), extractedFileList.end());
+			QSet<QString>  extractedFileSet;
+			foreach (const QString &s, extractedFileList)
+				extractedFileSet.insert(s);
 
             extractedFileSet = extractedFileSet.subtract(fileNames);
 			QVERIFY(extractedFileSet.isEmpty());
